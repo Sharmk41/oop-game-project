@@ -5,6 +5,7 @@ var GAME_HEIGHT = 500;
 var ENEMY_WIDTH = 75;
 var ENEMY_HEIGHT = 156;
 var MAX_ENEMIES = 3;
+const RAINBOW_HEIGHT = ENEMY_HEIGHT / 2;
 
 var PLAYER_WIDTH = 75;
 var PLAYER_HEIGHT = 54;
@@ -12,12 +13,13 @@ var PLAYER_HEIGHT = 54;
 // These two constants keep us from using "magic numbers" in our code
 var LEFT_ARROW_CODE = 37;
 var RIGHT_ARROW_CODE = 39;
+const R_KEY_CODE = 82;
 
 // These two constants allow us to DRY
 var MOVE_LEFT = 'left';
 var MOVE_RIGHT = 'right';
 
-const MAX_LIVES = 3;
+const MAX_LIVES = 1;
 
 // Preload game images
 var images = {};
@@ -122,7 +124,7 @@ class Engine {
 
         var enemySpot;
         // Keep looping until we find a free enemy spot at random
-        while (enemySpot == null || this.enemies[enemySpot]) {
+        while (enemySpot === undefined || this.enemies[enemySpot]) {
             enemySpot = Math.floor(Math.random() * enemySpots);
         }
 
@@ -131,18 +133,30 @@ class Engine {
 
     // This method kicks off the game
     start() {
+        
+        // Listen for keyboard left/right and update the player
+        document.addEventListener('keydown', e => {
+
+            //console.log(e.keyCode);
+
+            if (e.keyCode === LEFT_ARROW_CODE) {
+                this.player.move(MOVE_LEFT);
+            } else if (e.keyCode === RIGHT_ARROW_CODE) {
+                this.player.move(MOVE_RIGHT);
+            } else if (e.keyCode === R_KEY_CODE) {
+                this.restart();
+            }
+        });
+
+        this.restart();
+    }
+
+    restart() {
         this.score = 0;
         this.lastFrame = Date.now();
 
-        // Listen for keyboard left/right and update the player
-        document.addEventListener('keydown', e => {
-            if (e.keyCode === LEFT_ARROW_CODE) {
-                this.player.move(MOVE_LEFT);
-            }
-            else if (e.keyCode === RIGHT_ARROW_CODE) {
-                this.player.move(MOVE_RIGHT);
-            }
-        });
+        this.enemies = [];
+        this.player.lives = MAX_LIVES;
 
         this.gameLoop();
     }
@@ -207,12 +221,12 @@ class Engine {
         const enemyIdx = this.player.x / PLAYER_WIDTH;
         const enemy = this.enemies[enemyIdx];
 
-        if (enemy && GAME_HEIGHT - (enemy.y + ENEMY_HEIGHT) < PLAYER_HEIGHT) {
+        if (enemy && GAME_HEIGHT - (enemy.y + ENEMY_HEIGHT) < PLAYER_HEIGHT && enemy.y + RAINBOW_HEIGHT < GAME_HEIGHT) {
             this.player.lives--;
             delete this.enemies[this.player.x / PLAYER_WIDTH];
         }
 
-        return this.player.lives < 0;
+        return this.player.lives == 0;
     }
 }
 
