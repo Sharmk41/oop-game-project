@@ -198,8 +198,9 @@ class Engine {
     }
 
     isPlayerDead() {
-        // TODO: fix this function!
-        return false;
+        const spot = this.enemies[this.player.x / PLAYER_WIDTH]
+
+        return spot && GAME_HEIGHT - (spot.y + ENEMY_HEIGHT) < PLAYER_HEIGHT
     }
 }
 
