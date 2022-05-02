@@ -1,10 +1,10 @@
 // This section contains some game constants
-var GAME_WIDTH = 375;
-var GAME_HEIGHT = 500;
+var GAME_WIDTH = 525;
+var GAME_HEIGHT = 800;
 
 var ENEMY_WIDTH = 75;
 var ENEMY_HEIGHT = 156;
-var MAX_ENEMIES = 3;
+var MAX_ENEMIES = 4;
 const RAINBOW_HEIGHT = ENEMY_HEIGHT / 2;
 
 var PLAYER_WIDTH = 75;
@@ -20,6 +20,12 @@ var MOVE_LEFT = 'left';
 var MOVE_RIGHT = 'right';
 
 const MAX_LIVES = 1;
+
+// TODO
+//  - Add visual lives
+//  - Bonus points drop
+//
+
 
 // Preload game images
 var images = {};
@@ -38,14 +44,14 @@ class Entity {
 
 
 class Enemy extends Entity {
-    constructor(xPos) {
+    constructor(xPos, score) {
         super();
         this.x = xPos;
         this.y = -ENEMY_HEIGHT;
         this.sprite = images['enemy.png'];
 
         // Each enemy should have a different speed
-        this.speed = Math.random() / 2 + 0.25;
+        this.speed = Math.random() / 2 + score / 200 + 0.25;
     }
 
     update(timeDiff) {
@@ -128,7 +134,7 @@ class Engine {
             enemySpot = Math.floor(Math.random() * enemySpots);
         }
 
-        this.enemies[enemySpot] = new Enemy(enemySpot * ENEMY_WIDTH);
+        this.enemies[enemySpot] = new Enemy(enemySpot * ENEMY_WIDTH, this.score);
     }
 
     // This method kicks off the game
@@ -177,13 +183,13 @@ class Engine {
         var timeDiff = currentFrame - this.lastFrame;
 
         // Increase the score!
-        this.score += timeDiff;
+        //this.score += timeDiff;
 
         // Call update on all enemies
         this.enemies.forEach(enemy => enemy.update(timeDiff));
 
         // Draw everything!
-        this.ctx.drawImage(images['stars.png'], 0, 0); // draw the star bg
+        this.ctx.drawImage(images['stars.png'], 0, 0, GAME_WIDTH, GAME_HEIGHT); // draw the star bg
         this.enemies.forEach(enemy => enemy.render(this.ctx)); // draw the enemies
         this.player.render(this.ctx); // draw the player
 
@@ -191,6 +197,7 @@ class Engine {
         this.enemies.forEach((enemy, enemyIdx) => {
             if (enemy.y > GAME_HEIGHT) {
                 delete this.enemies[enemyIdx];
+                this.score++;
             }
         });
         this.setupEnemies();
