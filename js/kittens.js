@@ -17,6 +17,8 @@ var RIGHT_ARROW_CODE = 39;
 var MOVE_LEFT = 'left';
 var MOVE_RIGHT = 'right';
 
+const MAX_LIVES = 3;
+
 // Preload game images
 var images = {};
 ['enemy.png', 'stars.png', 'player.png'].forEach(imgName => {
@@ -56,6 +58,7 @@ class Player extends Entity {
         this.x = 2 * PLAYER_WIDTH;
         this.y = GAME_HEIGHT - PLAYER_HEIGHT - 10;
         this.sprite = images['player.png'];
+        this.lives = MAX_LIVES;
     }
 
     // This method is called by the game engine when left/right arrows are pressed
@@ -184,12 +187,15 @@ class Engine {
             this.ctx.font = 'bold 30px Impact';
             this.ctx.fillStyle = '#ffffff';
             this.ctx.fillText(this.score + ' GAME OVER', 5, 30);
+
         }
         else {
             // If player is not dead, then draw the score
             this.ctx.font = 'bold 30px Impact';
             this.ctx.fillStyle = '#ffffff';
             this.ctx.fillText(this.score, 5, 30);
+
+            this.ctx.fillText('Lives: ' + this.player.lives, 5, 60);
 
             // Set the time marker and redraw
             this.lastFrame = Date.now();
@@ -198,9 +204,15 @@ class Engine {
     }
 
     isPlayerDead() {
-        const spot = this.enemies[this.player.x / PLAYER_WIDTH]
+        const enemyIdx = this.player.x / PLAYER_WIDTH;
+        const enemy = this.enemies[enemyIdx];
 
-        return spot && GAME_HEIGHT - (spot.y + ENEMY_HEIGHT) < PLAYER_HEIGHT
+        if (enemy && GAME_HEIGHT - (enemy.y + ENEMY_HEIGHT) < PLAYER_HEIGHT) {
+            this.player.lives--;
+            delete this.enemies[this.player.x / PLAYER_WIDTH];
+        }
+
+        return this.player.lives < 0;
     }
 }
 
