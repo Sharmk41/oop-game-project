@@ -24,6 +24,11 @@ const MAX_LIVES = 3;
 // TODO
 //
 
+PlayMusic = function() {
+    var audio = new Audio("sounds/music.mp3");
+    audio.loop = true;
+    audio.play();
+}
 
 // Preload game images
 var images = {};
@@ -145,7 +150,7 @@ class Engine {
 
     // This method kicks off the game
     start() {
-        
+        PlayMusic();
         // Listen for keyboard left/right and update the player
         document.addEventListener('keydown', e => {
 
@@ -272,3 +277,4 @@ function isPrime(num) {
 // This section will start the game
 var gameEngine = new Engine(document.getElementById('app'));
 gameEngine.start();
+
