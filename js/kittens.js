@@ -221,7 +221,9 @@ class Engine {
             // If they are dead, then it's game over!
             this.ctx.font = 'bold 30px Impact';
             this.ctx.fillStyle = '#ffffff';
-            this.ctx.fillText(this.score + ' GAME OVER', 5, 30);
+            this.ctx.fillText('Score: ' + this.score, 5, 30);
+            this.ctx.fillText('GAME OVER', 5, 60);
+            this.ctx.fillText('R to restart', 5, 90);
 
         }
         else {
