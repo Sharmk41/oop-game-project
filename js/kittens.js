@@ -1,10 +1,10 @@
 // This section contains some game constants
 var GAME_WIDTH = 525;
-var GAME_HEIGHT = 800;
+var GAME_HEIGHT = 900;
 
 var ENEMY_WIDTH = 75;
 var ENEMY_HEIGHT = 156;
-var MAX_ENEMIES = 4;
+var MAX_ENEMIES = 5;
 const RAINBOW_HEIGHT = ENEMY_HEIGHT / 2;
 
 var PLAYER_WIDTH = 75;
@@ -19,17 +19,15 @@ const R_KEY_CODE = 82;
 var MOVE_LEFT = 'left';
 var MOVE_RIGHT = 'right';
 
-const MAX_LIVES = 1;
+const MAX_LIVES = 3;
 
 // TODO
-//  - Add visual lives
-//  - Bonus points drop
 //
 
 
 // Preload game images
 var images = {};
-['enemy.png', 'stars.png', 'player.png'].forEach(imgName => {
+['enemy.png', 'stars.png', 'player.png', 'heart.png'].forEach(imgName => {
     var img = document.createElement('img');
     img.src = 'images/' + imgName;
     images[imgName] = img;
@@ -51,7 +49,18 @@ class Enemy extends Entity {
         this.sprite = images['enemy.png'];
 
         // Each enemy should have a different speed
-        this.speed = Math.random() / 2 + score / 200 + 0.25;
+        this.speed = Math.random() / 2 + score / 400 + 0.25;
+
+        this.number = Math.floor(Math.random() * score) + 1;
+    }
+
+    render(ctx) {
+        super.render(ctx);
+
+        // Draw number
+        const width = Math.max(Math.floor(Math.log10(this.number)), 0) + 1;
+        ctx.fillStyle = '#ff0000';
+        ctx.fillText(this.number, this.x + ENEMY_WIDTH / 2 - width * 10, this.y + 110);
     }
 
     update(timeDiff) {
@@ -80,9 +89,6 @@ class Player extends Entity {
     }
 
 }
-
-
-
 
 
 /*
@@ -202,6 +208,8 @@ class Engine {
         });
         this.setupEnemies();
 
+        const HEART_SIZE = 35;
+
         // Check if player is dead
         if (this.isPlayerDead()) {
             // If they are dead, then it's game over!
@@ -214,9 +222,12 @@ class Engine {
             // If player is not dead, then draw the score
             this.ctx.font = 'bold 30px Impact';
             this.ctx.fillStyle = '#ffffff';
-            this.ctx.fillText(this.score, 5, 30);
+            this.ctx.fillText(`Score: ${this.score}`, 5, 30);
 
-            this.ctx.fillText('Lives: ' + this.player.lives, 5, 60);
+            this.ctx.fillText('Lives: ', 5, 60);
+            for (var i = 0; i < this.player.lives; i++) {
+                this.ctx.drawImage(images['heart.png'], 80 + i * HEART_SIZE, HEART_SIZE, HEART_SIZE, HEART_SIZE);
+            }
 
             // Set the time marker and redraw
             this.lastFrame = Date.now();
@@ -228,8 +239,13 @@ class Engine {
         const enemyIdx = this.player.x / PLAYER_WIDTH;
         const enemy = this.enemies[enemyIdx];
 
+        // Check collision
         if (enemy && GAME_HEIGHT - (enemy.y + ENEMY_HEIGHT) < PLAYER_HEIGHT && enemy.y + RAINBOW_HEIGHT < GAME_HEIGHT) {
-            this.player.lives--;
+            if (!isPrime(this.enemies[this.player.x / PLAYER_WIDTH].number)) {
+                this.player.lives--;
+            } else {
+                this.score += this.enemies[this.player.x / PLAYER_WIDTH].number;
+            }
             delete this.enemies[this.player.x / PLAYER_WIDTH];
         }
 
@@ -237,7 +253,16 @@ class Engine {
     }
 }
 
+function isPrime(num) {
+    const sqrt = Math.sqrt(num);
 
+    for (var i = 2; i <= sqrt; i++) {
+        if (num % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
 
 
 
