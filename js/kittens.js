@@ -60,7 +60,7 @@ class Enemy extends Entity {
         // Draw number
         const width = Math.max(Math.floor(Math.log10(this.number)), 0) + 1;
         ctx.fillStyle = 'black';
-        ctx.fillText(this.number, this.x + ENEMY_WIDTH / 2 - width * 10, this.y + 110);
+        ctx.fillText(this.number, this.x + ENEMY_WIDTH / 2 - width * 8, this.y + 110);
     }
 
     update(timeDiff) {
@@ -254,6 +254,9 @@ class Engine {
 }
 
 function isPrime(num) {
+    if (num <= 1) {
+        return false;
+    }
     const sqrt = Math.sqrt(num);
 
     for (var i = 2; i <= sqrt; i++) {
