@@ -27,6 +27,7 @@ const MAX_LIVES = 3;
 PlayMusic = function() {
     var audio = new Audio("sounds/music.mp3");
     audio.loop = true;
+    audio.volume = 0.2;
     audio.play();
 }
 
@@ -54,7 +55,7 @@ class Enemy extends Entity {
         this.sprite = images['enemy.png'];
 
         // Each enemy should have a different speed
-        this.speed = Math.random() / 2 + score / 500 + 0.25;
+        this.speed = Math.random() / 2 + score / 600 + 0.25;
 
         this.number = Math.floor(Math.random() * score) + 1;
     }
