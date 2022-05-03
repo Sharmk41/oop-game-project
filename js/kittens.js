@@ -246,12 +246,12 @@ class Engine {
 
         // Check collision
         if (enemy && GAME_HEIGHT - (enemy.y + ENEMY_HEIGHT) < PLAYER_HEIGHT && enemy.y + RAINBOW_HEIGHT < GAME_HEIGHT) {
-            if (!isPrime(this.enemies[this.player.x / PLAYER_WIDTH].number)) {
+            if (!isPrime(enemy.number)) {
                 this.player.lives--;
             } else {
-                this.score += this.enemies[this.player.x / PLAYER_WIDTH].number;
+                this.score += enemy.number;
             }
-            delete this.enemies[this.player.x / PLAYER_WIDTH];
+            delete this.enemies[enemyIdx];
         }
 
         return this.player.lives == 0;
