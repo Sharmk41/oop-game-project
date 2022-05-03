@@ -1,6 +1,6 @@
 // This section contains some game constants
 var GAME_WIDTH = 525;
-var GAME_HEIGHT = 900;
+var GAME_HEIGHT = 700;
 
 var ENEMY_WIDTH = 75;
 var ENEMY_HEIGHT = 156;
@@ -49,7 +49,7 @@ class Enemy extends Entity {
         this.sprite = images['enemy.png'];
 
         // Each enemy should have a different speed
-        this.speed = Math.random() / 2 + score / 400 + 0.25;
+        this.speed = Math.random() / 2 + score / 500 + 0.25;
 
         this.number = Math.floor(Math.random() * score) + 1;
     }
@@ -59,7 +59,7 @@ class Enemy extends Entity {
 
         // Draw number
         const width = Math.max(Math.floor(Math.log10(this.number)), 0) + 1;
-        ctx.fillStyle = '#ff0000';
+        ctx.fillStyle = 'black';
         ctx.fillText(this.number, this.x + ENEMY_WIDTH / 2 - width * 10, this.y + 110);
     }
 
